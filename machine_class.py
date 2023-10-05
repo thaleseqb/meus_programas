@@ -50,7 +50,8 @@ class Params:
 
 class Machine_study(Params):
 
-    def __init__(self, bunch=None, nturns=10, coord_idx=0,  coord_amp=0.02, coord_amp_nrpts=200):
+    def __init__(self, bunch=None, nturns=10, coord_idx=0,
+                 coord_amp_p=0.02, coord_amp_n=-0.02, coord_amp_nrpts=200, ):
         
         self._nr_particles = 10
         if bunch is None:
@@ -62,7 +63,8 @@ class Machine_study(Params):
         self._bunch = bunch
         self._nturns = nturns
         self._coord_idx = coord_idx
-        self._coord_amp = coord_amp
+        self._coord_amp_p = coord_amp_p
+        self._coord_amp_n = coord_amp_n
         self._coord_amp_nrpts = coord_amp_nrpts
 
     @property
@@ -101,12 +103,20 @@ class Machine_study(Params):
         self._coord_idx = new_coord
 
     @property
-    def coord_amp(self):
-        return self._coord_amp
+    def coord_amp_p(self):
+        return self._coord_amp_p
     
-    @coord_amp.setter
-    def coord_amp(self, new_amp):
-        self._coord_amp = new_amp
+    @coord_amp_p.setter
+    def coord_amp_p(self, new_amp):
+        self._coord_amp_p = new_amp
+
+    @property
+    def coord_amp_n(self):
+        return self._coord_amp_n
+    
+    @coord_amp_n.setter
+    def coord_amp_n(self, new_amp):
+        self._coord_amp_n = new_amp
     
     @property
     def coord_amp_nrpts(self):
