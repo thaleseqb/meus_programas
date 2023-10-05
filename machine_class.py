@@ -141,13 +141,13 @@ class Machine_study(Params):
 
         res_pos = mchn_func.varying_incmnts(params=Params, bunch=self._bunch,
                                         nturn=self._nturns, coord_idx=self._coord_idx,
-                                        coord_amp=self._coord_amp, coord_amp_nrpts=self._coord_amp_nrpts,
+                                        coord_amp=self._coord_amp_p, coord_amp_nrpts=self._coord_amp_nrpts,
                                         scp_wid_posh=scp_p_h, scp_wid_negh=scp_n_h,
                                         scp_wid_posv=scp_p_v, scp_wid_negv=scp_n_v, m_fact=mult_factor)
         
         res_neg = mchn_func.varying_incmnts(params=Params, bunch=self._bunch,
                                         nturn=self._nturns, coord_idx=self._coord_idx,
-                                        coord_amp=self._coord_amp, coord_amp_nrpts=self._coord_amp_nrpts,
+                                        coord_amp=self._coord_amp_n, coord_amp_nrpts=self._coord_amp_nrpts,
                                         scp_wid_posh=scp_p_h, scp_wid_negh=scp_n_h,
                                         scp_wid_posv=scp_p_v, scp_wid_negv=scp_n_v, m_fact=mult_factor)
         
