@@ -1,8 +1,10 @@
+#!/usr/bin/env python-sirius
 
 import pyaccel as _pyaccel
 import pymodels
 import numpy as _np
 import matplotlib.pyplot as _plt
+
 
 
 class Params:
