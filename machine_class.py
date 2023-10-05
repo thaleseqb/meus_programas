@@ -52,12 +52,13 @@ class Machine_study(Params):
 
     def __init__(self, bunch=None, nturns=10, coord_idx=0,  coord_amp=0.02, coord_amp_nrpts=200):
         
+        self._nr_particles = 10
         if bunch is None:
             bunch = _pyaccel.tracking.generate_bunch(n_part=self._nr_particles, envelope=None,
                                                      emit1=Params.h_emitt, emit2=Params.v_emitt,
                                                      sigmae=Params.sigmae,sigmas=Params.bun_len,
                                                      optics=Params.twiss[Params.nlk_index])
-        self._nr_particles = 10
+        
         self._bunch = bunch
         self._nturns = nturns
         self._coord_idx = coord_idx
@@ -71,6 +72,17 @@ class Machine_study(Params):
     @nr_particles.setter
     def nr_particles(self, new_particles):
         self._nr_particles = new_particles
+
+    @property
+    def bunch(self):
+        return self._bunch
+    
+    @bunch.setter
+    def bunch(self, new_particles):
+        self._bunch = _pyaccel.tracking.generate_bunch(n_part=new_particles, envelope=None,
+                                                     emit1=Params.h_emitt, emit2=Params.v_emitt,
+                                                     sigmae=Params.sigmae,sigmas=Params.bun_len,
+                                                     optics=Params.twiss[Params.nlk_index])
     
     @property
     def nturns(self):
@@ -105,7 +117,7 @@ class Machine_study(Params):
         self._coord_amp_nrpts = new_amp_nrpts
 
 
-    def personalized_plot(self, mult_factor, coord_idx, label_y, scp_p_h, scp_n_h, scp_p_v, scp_n_v):
+    def personalized_plot(self, mult_factor, coord_idx, scp_p_h, scp_n_h, scp_p_v, scp_n_v):
 
         ''' 
         mult_factor: Multiplicative factor that will fix the units of the graphic.
@@ -117,29 +129,32 @@ class Machine_study(Params):
         scp_n_v: Vertical negative scraper width
         '''
 
-        res = mchn_func.varying_incmnts(params=Params, bunch=self._bunch,
+        res_pos = mchn_func.varying_incmnts(params=Params, bunch=self._bunch,
                                         nturn=self._nturns, coord_idx=self._coord_idx,
                                         coord_amp=self._coord_amp, coord_amp_nrpts=self._coord_amp_nrpts,
                                         scp_wid_posh=scp_p_h, scp_wid_negh=scp_n_h,
                                         scp_wid_posv=scp_p_v, scp_wid_negv=scp_n_v, m_fact=mult_factor)
         
-        lostpos_n, lostpos_m, losttur_n, losttur_m, inc_qlst_n, inc_qlst_m = res
-
-        mchn_func.p_sim(lostpos_n, lostpos_m, losttur_n, losttur_m, inc_qlst_n, inc_qlst_m, scp_p_h, scp_n_h, scp_p_v, scp_n_v, coord_idx)
-
-        # se a coordenada for 0 o que interessa ser mostrado nos plots é a o scraper horizontal
-        # o fator multiplicativo vai ser de 1e3 para corrigir para milimetros
-
-        # se a coordenada for 1 o que interessa ser mostrado nos plots com certeza devo mostrar o o scraperhorizontal, devo perguntar ainda se devo mostrar também o scraper vertical
-        # o fator multiplicativo ainda deve se3r definido
-
-        # se a coordenada for 2 o que interessa ser mostrar nos plots é o scraper vertical
-        # o fator multiplicativo provavelmente também 1e3 porque a unidade que saem os returns são dadas em metros 
+        res_neg = mchn_func.varying_incmnts(params=Params, bunch=self._bunch,
+                                        nturn=self._nturns, coord_idx=self._coord_idx,
+                                        coord_amp=self._coord_amp, coord_amp_nrpts=self._coord_amp_nrpts,
+                                        scp_wid_posh=scp_p_h, scp_wid_negh=scp_n_h,
+                                        scp_wid_posv=scp_p_v, scp_wid_negv=scp_n_v, m_fact=mult_factor)
         
-        # se a coordenada for 3 o que interessa ser mostrar nos plots provavelmente são os dois, bom vamos ver
-        # 
+        lostpos_np,lostpos_mp, losttur_np,losttur_mp, inc_qlst_np, inc_qlst_mp = res_pos
+        lostpos_nn,lostpos_mn, losttur_nn,losttur_mn, inc_qlst_nn, inc_qlst_mn = res_neg
 
-        return 
+        rlostposn = _np.r_[_np.array(lostpos_nn, dtype=object),_np.array(lostpos_np, dtype=object)]
+        rlostturn = _np.r_[_np.array(losttur_nn),_np.array(losttur_np)]
+        rincn = _np.r_[_np.array(inc_qlst_np),_np.array(inc_qlst_nn)]
+
+        rlostposm = _np.r_[_np.array(lostpos_mn, dtype=object),_np.array(lostpos_mp, dtype=object)]
+        rlostturm = _np.r_[_np.array(losttur_mn),_np.array(losttur_mp)]
+        rincm = _np.r_[_np.array(inc_qlst_mp),_np.array(inc_qlst_mn)]
+
+        mchn_func.p_sim(Params,rlostposn, rlostposm, rlostturn, rlostturm, rincn, rincm, scp_p_h, scp_n_h, scp_p_v, scp_n_v, coord_idx=coord_idx)
+
+        return
 
     
     # eu preciso definir alguns parametros que serão uteis para esta classe 

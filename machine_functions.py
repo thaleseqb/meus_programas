@@ -166,6 +166,8 @@ def p_sim(params,lostpos_n, lostpos_m, losttur_n, losttur_m, inc_qlst_n, inc_qls
 
     _plt.tight_layout()
     _plt.show()
+    
+    return 
 
 # essa função também vai possuir muitos parametros,
 # preciso ainda indicar sobre qual dos indices do vetor estou realizando a variação de parametros
