@@ -39,7 +39,7 @@ def track_mchn_stdy(params, bunch, nturn, coord_idx, increment):
     
     return turnl_element
 
-def varying_incmnts(params, bunch, nturn, coord_idx, coord_amp, coord_amp_nrpts, scp_wid_posh, scp_wid_negh, scp_wid_posv, scp_wid_negv):
+def varying_incmnts(params, bunch, nturn, coord_idx, coord_amp, coord_amp_nrpts, scp_wid_posh, scp_wid_negh, scp_wid_posv, scp_wid_negv, m_fact):
 
     ''' 
         params: parameters used in simulation like the accelerator model 
@@ -71,7 +71,7 @@ def varying_incmnts(params, bunch, nturn, coord_idx, coord_amp, coord_amp_nrpts,
         if len(track) == 0:
             pass
         else:
-            mean = _np.mean(bunchi[coord_idx])
+            mean = _np.mean(bunchi[coord_idx]) * m_fact
             inc_qlst_n.append([mean,length]) # this will be the y axis of the graphic
             for lst in track:
                 lost_turn, lost_pos = lst
@@ -89,7 +89,7 @@ def varying_incmnts(params, bunch, nturn, coord_idx, coord_amp, coord_amp_nrpts,
         if len(track) == 0:
             pass
         else:
-            mean = _np.mean(bunchi[coord_idx])
+            mean = _np.mean(bunchi[coord_idx])* m_fact
             inc_qlst_m.append([mean,length]) 
             for lst in track:
                 lost_turn, lost_pos = lst
@@ -102,17 +102,17 @@ def varying_incmnts(params, bunch, nturn, coord_idx, coord_amp, coord_amp_nrpts,
 # Eu preciso dar um jeito de passar a multiplicação que ocorre na media distinguindo quando vai ser a posição e quando vao ser os angulos.
 
 
-def p_sim(params,lostpos_n, lostpos_m, losttur_n, losttur_m, inc_qlst_n, inc_qlst_m, scp_w1, scp_w2):
+def p_sim(params,lostpos_n, lostpos_m, losttur_n, losttur_m, inc_qlst_n, inc_qlst_m, scp_w1h, scp_w2h, scp_w1v, scp_w2v, coord_idx):
     fig1, (a1n,a2n,a3n) = _plt.subplots(nrows=1,ncols=3, sharey=True, figsize=(10,5))
     h = _np.mean(_np.array(lostpos_n)[:,1]) * 0.1
     
     #defining the title of the graphics
-    if scp_w1 == scp_w2:
-        a3n.plot(params.spos[lostpos_n[0][0]], lostpos_n[0][1], label='{}'.format(params.scraper_width0*1e3), color='blue')
-        a3n.plot(params.spos[lostpos_m[0][0]], lostpos_m[0][1], label='{}'.format(scp_w1*1e3), color='red')
+    if scp_w1h == scp_w2h and scp_w1v == scp_w2v:
+        a3n.plot(params.spos[lostpos_n[0][0]], lostpos_n[0][1], label='(scp_h {} [mm]), (scp_v {} [mm])'.format(params.scraper_width0*1e3,params.scraper_height0*1e3), color='blue')
+        a3n.plot(params.spos[lostpos_m[0][0]], lostpos_m[0][1], label='(scp_h {} [mm]), (scp_v {} [mm])'.format(scp_w1h*1e3, scp_w1v*1e3), color='red')
     else:
-        a3n.plot(params.spos[lostpos_n[0][0]], lostpos_n[0][1], label='{}'.format(params.scraper_width0*1e3), color='blue')
-        a3n.plot(params.spos[lostpos_m[0][0]], lostpos_m[0][1], label='{}, {}'.format(scp_w1*1e3, scp_w2*1e3), color='red')
+        a3n.plot(params.spos[lostpos_n[0][0]], lostpos_n[0][1], label='(scp_h {} [mm]), (scp_v {} [mm])'.format(params.scraper_width0*1e3,params.scraper_height0*1e3), color='blue')
+        a3n.plot(params.spos[lostpos_m[0][0]], lostpos_m[0][1], label='(scp_h {}, {} [mm]), (scp_v {}, {} [mm])'.format(scp_w1h*1e3, scp_w2h*1e3, scp_w1v*1e3, scp_w2v*1e3), color='red')
 
     a3n.legend(fontsize=12)
     
@@ -122,11 +122,25 @@ def p_sim(params,lostpos_n, lostpos_m, losttur_n, losttur_m, inc_qlst_n, inc_qls
     for iten in inc_qlst_n:
         a1n.plot(iten[1], iten[0] , '.', color='blue', alpha = 0.4)
     a1n.set_xlabel(r'Number of electrons lost', fontsize=16)
-    a1n.set_ylabel(r'position mean [mm]', fontsize=16)
-
+    
+    if coord_idx == 0:
+        a1n.set_ylabel(r'horizontal position mean [mm]', fontsize=16)
+    elif coord_idx == 1:
+        a1n.set_ylabel(r'x^{$\prime$} mean [mrad]', fontsize=16)
+    elif coord_idx == 2:
+        a1n.set_ylabel(r'vertical position mean [mm]', fontsize=16)
+    elif coord_idx == 3:
+        a1n.set_ylabel(r'y^{$\prime$} mean [mrad]', fontsize=16)
+    
+    a1n.grid(True, alpha=0.5, ls='--', color='k')
+    a2n.grid(True, alpha=0.5, ls='--', color='k')
+    a3n.grid(True, alpha=0.5, ls='--', color='k')
     a1n.tick_params(axis='both', labelsize=12)
     a2n.tick_params(axis='both', labelsize=12)
     a3n.tick_params(axis='both', labelsize=12)
+    a1n.xaxis.grid(False)
+    a2n.xaxis.grid(False)
+    a3n.xaxis.grid(False)
     
     for iten in losttur_n:
         a2n.plot(iten[0], iten[1], '.', color='blue', alpha = 0.4)
