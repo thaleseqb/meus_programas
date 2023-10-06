@@ -166,10 +166,4 @@ class Machine_study(Params):
 
         return
 
-    
-    # eu preciso definir alguns parametros que serão uteis para esta classe 
-    # por exemplo preciso indicar quando cada parametro será variado 
-    # quando eu definir cada parametro que sera variado eu também preciso 
-    
-    # eu também preciso modificar a função que vai realizar os plots dos gráficos para o estudo de maquina
 

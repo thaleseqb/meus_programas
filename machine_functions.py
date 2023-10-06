@@ -99,12 +99,10 @@ def varying_incmnts(params, bunch, nturn, coord_idx, coord_amp, coord_amp_nrpts,
 
     return lostpos_n, lostpos_m, losttur_n, losttur_m, inc_qlst_n, inc_qlst_m
 
-# Eu preciso dar um jeito de passar a multiplicação que ocorre na media distinguindo quando vai ser a posição e quando vao ser os angulos.
-
 
 def p_sim(params,lostpos_n, lostpos_m, losttur_n, losttur_m, inc_qlst_n, inc_qlst_m, scp_w1h, scp_w2h, scp_w1v, scp_w2v, coord_idx):
     fig1, (a1n,a2n,a3n) = _plt.subplots(nrows=1,ncols=3, sharey=True, figsize=(10,5))
-    h = _np.mean(_np.array(lostpos_n)[:,1]) * 0.1
+    h = _np.mean(_np.array(lostpos_n)[:,1])
     
     #defining the title of the graphics
     if scp_w1h == scp_w2h and scp_w1v == scp_w2v:
@@ -114,9 +112,16 @@ def p_sim(params,lostpos_n, lostpos_m, losttur_n, losttur_m, inc_qlst_n, inc_qls
         a3n.plot(params.spos[lostpos_n[0][0]], lostpos_n[0][1], label='(scp_h {} [mm]), (scp_v {} [mm])'.format(params.scraper_width0*1e3,params.scraper_height0*1e3), color='blue')
         a3n.plot(params.spos[lostpos_m[0][0]], lostpos_m[0][1], label='(scp_h {}, {} [mm]), (scp_v {}, {} [mm])'.format(scp_w1h*1e3, scp_w2h*1e3, scp_w1v*1e3, scp_w2v*1e3), color='red')
 
+    # if scp_w1h == scp_w2h and scp_w1v == scp_w2v:
+    #     a3n.plot(params.spos[lostpos_n[0][0]], lostpos_n[0][1], label='{}, {}'.format(params.scraper_width0*1e3,params.scraper_height0*1e3), color='blue')
+    #     a3n.plot(params.spos[lostpos_m[0][0]], lostpos_m[0][1], label='{}, {}'.format(scp_w1h*1e3, scp_w1v*1e3), color='red')
+    # else:
+    #     a3n.plot(params.spos[lostpos_n[0][0]], lostpos_n[0][1], label='{}, {}'.format(params.scraper_width0*1e3,params.scraper_height0*1e3), color='blue')
+    #     a3n.plot(params.spos[lostpos_m[0][0]], lostpos_m[0][1], label='{}, {}, {}, {}'.format(scp_w1h*1e3, scp_w2h*1e3, scp_w1v*1e3, scp_w2v*1e3), color='red')
+
     a3n.legend(fontsize=12)
     
-    fig1.subplots_adjust(hspace=0.2)
+    fig1.subplots_adjust(hspace=0.1)
 
 
     for iten in inc_qlst_n:
@@ -126,11 +131,11 @@ def p_sim(params,lostpos_n, lostpos_m, losttur_n, losttur_m, inc_qlst_n, inc_qls
     if coord_idx == 0:
         a1n.set_ylabel(r'horizontal position mean [mm]', fontsize=16)
     elif coord_idx == 1:
-        a1n.set_ylabel(r'x^{$\prime$} mean [mrad]', fontsize=16)
+        a1n.set_ylabel(r'$x^{\prime}$ mean [mrad]', fontsize=16)
     elif coord_idx == 2:
         a1n.set_ylabel(r'vertical position mean [mm]', fontsize=16)
     elif coord_idx == 3:
-        a1n.set_ylabel(r'y^{$\prime$} mean [mrad]', fontsize=16)
+        a1n.set_ylabel(r'$y^{\prime}$ mean [mrad]', fontsize=16)
     
     a1n.grid(True, alpha=0.5, ls='--', color='k')
     a2n.grid(True, alpha=0.5, ls='--', color='k')
@@ -151,15 +156,14 @@ def p_sim(params,lostpos_n, lostpos_m, losttur_n, losttur_m, inc_qlst_n, inc_qls
     
 
     for iten in inc_qlst_m:
-        a1n.plot(iten[1], iten[0] , '.', color='red', alpha=0.7)
+        a1n.plot(iten[1], iten[0] , '.', color='red', alpha=0.3)
     a1n.set_xlabel(r'Number of electrons lost', fontsize=16)
-    a1n.set_ylabel(r'position mean [mm]', fontsize=16)
 
     for iten in losttur_m:
-        a2n.plot(iten[0], iten[1], '.', color='red', alpha=0.7)
+        a2n.plot(iten[0], iten[1], '.', color='red', alpha=0.3)
     a2n.set_xlabel(r'nturns', fontsize=16)
     for iten in lostpos_m:
-        a3n.plot(params.spos[iten[0]], iten[1], '.', color='red', alpha=0.7)
+        a3n.plot(params.spos[iten[0]], iten[1], '.', color='red', alpha=0.3)
     a3n.set_xlabel(r'spos [m]', fontsize=16)
     
     _pyaccel.graphics.draw_lattice(params.fitm, height=h, offset=0, gca=True)
@@ -168,10 +172,3 @@ def p_sim(params,lostpos_n, lostpos_m, losttur_n, losttur_m, inc_qlst_n, inc_qls
     _plt.show()
     
     return 
-
-# essa função também vai possuir muitos parametros,
-# preciso ainda indicar sobre qual dos indices do vetor estou realizando a variação de parametros
-
-# será que para cada caso eu preciso necessariamente fornecer a legenda correspondente ? eu realmente nao consigo fazer isso de forma menos trabalhosa?
-# lembrei outra coisa que eu preciso fazer, ajustar o tamanho da rede magnética que será plotada juntamente com o gráfico da posição perdida para indicar onde se encontra o scraper
-# e ainda ajustar o fator que irá multiplicar as respectivas médias para uma melhor visualização e análise gráfica
