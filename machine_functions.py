@@ -1,7 +1,6 @@
 #!/usr/bin/env python-sirius
 
 import pyaccel as _pyaccel
-import pymodels
 import numpy as _np
 import matplotlib.pyplot as _plt
 
@@ -24,7 +23,7 @@ def track_mchn_stdy(params, bunch, nturn, coord_idx, increment):
     bunch[coord_idx] += increment
     tracked = _pyaccel.tracking.ring_pass(params.fitm, particles=bunch,
                                          nr_turns=nturn, turn_by_turn= True,
-                                         element_offset=params.nlk_index, parallel=False)
+                                         element_offset=params.nlk_index, parallel=True)
     
     part_out, lost_flag, turn_lost, index_lost, plane_lost = tracked
     # print(lost_flag)
@@ -106,11 +105,11 @@ def p_sim(params,lostpos_n, lostpos_m, losttur_n, losttur_m, inc_qlst_n, inc_qls
     
     #defining the title of the graphics
     if scp_w1h == scp_w2h and scp_w1v == scp_w2v:
-        a3n.plot(params.spos[lostpos_n[0][0]], lostpos_n[0][1], label='(scp_h {} [mm]), (scp_v {} [mm])'.format(params.scraper_width0*1e3,params.scraper_height0*1e3), color='blue')
-        a3n.plot(params.spos[lostpos_m[0][0]], lostpos_m[0][1], label='(scp_h {} [mm]), (scp_v {} [mm])'.format(scp_w1h*1e3, scp_w1v*1e3), color='red')
+        a3n.plot(params.spos[lostpos_n[0][0]], lostpos_n[0][1], label='h {} [mm], v {} [mm]'.format(params.scraper_width0*1e3,params.scraper_height0*1e3), color='blue')
+        a3n.plot(params.spos[lostpos_m[0][0]], lostpos_m[0][1], label='h {} [mm], v {} [mm]'.format(scp_w1h*1e3, scp_w1v*1e3), color='red')
     else:
-        a3n.plot(params.spos[lostpos_n[0][0]], lostpos_n[0][1], label='(scp_h {} [mm]), (scp_v {} [mm])'.format(params.scraper_width0*1e3,params.scraper_height0*1e3), color='blue')
-        a3n.plot(params.spos[lostpos_m[0][0]], lostpos_m[0][1], label='(scp_h {}, {} [mm]), (scp_v {}, {} [mm])'.format(scp_w1h*1e3, scp_w2h*1e3, scp_w1v*1e3, scp_w2v*1e3), color='red')
+        a3n.plot(params.spos[lostpos_n[0][0]], lostpos_n[0][1], label='h {} [mm], v {} [mm]'.format(params.scraper_width0*1e3,params.scraper_height0*1e3), color='blue')
+        a3n.plot(params.spos[lostpos_m[0][0]], lostpos_m[0][1], label='h {}, {} [mm], v {}, {} [mm]'.format(scp_w1h*1e3, scp_w2h*1e3, scp_w1v*1e3, scp_w2v*1e3), color='red')
 
     # if scp_w1h == scp_w2h and scp_w1v == scp_w2v:
     #     a3n.plot(params.spos[lostpos_n[0][0]], lostpos_n[0][1], label='{}, {}'.format(params.scraper_width0*1e3,params.scraper_height0*1e3), color='blue')
@@ -121,7 +120,7 @@ def p_sim(params,lostpos_n, lostpos_m, losttur_n, losttur_m, inc_qlst_n, inc_qls
 
     a3n.legend(fontsize=12)
     
-    fig1.subplots_adjust(hspace=0.1)
+    
 
 
     for iten in inc_qlst_n:
@@ -168,7 +167,8 @@ def p_sim(params,lostpos_n, lostpos_m, losttur_n, losttur_m, inc_qlst_n, inc_qls
     
     _pyaccel.graphics.draw_lattice(params.fitm, height=h, offset=0, gca=True)
 
-    _plt.tight_layout()
+    fig1.tight_layout()
+    fig1.subplots_adjust(hspace=0.05)
     _plt.show()
     
     return 
