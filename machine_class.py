@@ -203,6 +203,7 @@ class Machine_study(Params):
             idx_lost = re_['idx_lost']
             turn_lost = re_['turn_lost']
             bun_m = re_['bunch_mean']
+            set_lab = False
             for i, (idx, trn) in enumerate(zip(idx_lost, turn_lost)):
                 if not idx.size:
                     continue
@@ -213,8 +214,9 @@ class Machine_study(Params):
                 a3n.plot(
                     self.spos[idx], _np.full(idx.shape, bmean), '.', color=cor)
                 lin = a1n.plot(re_['nr_plost'][i], bmean, '.', color=cor)[0]
-                if not i:
+                if not set_lab:
                     lin.set_label(lab)
+                    set_lab = True
 
         a1n.grid(True, alpha=0.5, ls='--', color='k', lw=1)
         a2n.grid(True, alpha=0.5, ls='--', color='k', lw=1)
